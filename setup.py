@@ -1,20 +1,21 @@
-import os
+from os import path
 from setuptools import find_packages, setup
+from wagtailadminstreamfieldmeta import __VERSION__
 
-with open(os.path.join(os.path.dirname(__file__), 'README.md')) as readme:
-    README = readme.read()
-
-# allow setup.py to be run from any path
-os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
+this_directory = path.abspath(path.dirname(__file__))
+with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
+    long_description = f.read()
 
 setup(
     name='wagtail-adminstreamfieldmeta',
-    version='0.1',
+    version=__VERSION__,
     packages=find_packages(),
     include_package_data=True,
+    url='https://github.com/yohanlebret/wagtail-adminstreamfieldmeta',
     license='MIT',
     description='Wagtail Cms customization to add meta field for streamfield',
-    long_description=README,
+    long_description=long_description,
+    long_description_content_type='text/markdown',
     author='Yohan Lebret',
     author_email='yohan.lebret@gmail.com',
     classifiers=[
