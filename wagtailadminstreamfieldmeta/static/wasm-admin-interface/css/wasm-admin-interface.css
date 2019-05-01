@@ -70,6 +70,14 @@ ul.fields > li > label {
   border: 3px solid #9a9a9a !important;
 }
 
+.sequence-member .sequence-member .sequence-controls.position-cog {
+  background-color: unset;
+}
+
+.sequence-controls.position-cog .button-group {
+  margin-top: 44px;
+}
+
 .stream-menu {
   margin-top: 0em !important;
   top: 4px !important;
@@ -88,17 +96,26 @@ ul.fields > li > label {
   background-color: #e4e4e4 !important;
 }
 
-li.wasm-hidden-field {
+.wasm-hidden-field {
   height: 0px !important;
   width: 0px !important;
   margin: 0px !important;
   padding: 0px !important;
   overflow: hidden;
   opacity: 0;
-  transition: opacity 1s;
+  transition: all 1s;
 }
 
-li.wasm-visible-field {
+.wasm-visible-field {
+  height: auto;
+  width: auto;
+  margin: auto;
+  padding: auto;
+  overflow: initial;
   opacity: 1;
-  transition: opacity 1s;
+  transition: all 1s;
+}
+
+.meta-field-title {
+  text-decoration: underline;
 }

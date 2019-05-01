@@ -1,19 +1,23 @@
+let elems, metaPanelElems;
+
 document.addEventListener("DOMContentLoaded", function(event) {
   hideMetaFields();
   addSequenceControlsInfoButton();
 });
 
-document.addEventListener("DOMNodeInserted", function(event) {
-  var elem = event.target;
-  hideMetaFields();
-  addSequenceControlsInfoButton();
-});
+window.onload = function() {
+  document.addEventListener("DOMNodeInserted", function(event) {
+    const elem = event.target;
+    hideMetaFields();
+    addSequenceControlsInfoButton();
+  });
+}
 
 /**
  *  Hides all meta fields when the page loads.
  */
 function hideMetaFields(newElem) {
-  var elems = [ newElem ];
+  elems = [ newElem ];
   if (!newElem)
     elems = document.getElementsByClassName("wasm-meta-field");
 
@@ -30,16 +34,28 @@ function hideMetaFields(newElem) {
  *  class.
  */
 function addSequenceControlsInfoButton(newElem) {
-  var metaPanelElems = [ newElem ];
+  metaPanelElems = [ newElem ];
   if (!newElem)
     metaPanelElems = document.getElementsByClassName('wasm-meta-panel');
 
   Array.prototype.forEach.call(metaPanelElems, function(el) {
-    var parentContainerEl = el.parentElement.parentElement;
-    var n = parentContainerEl.id.lastIndexOf('-');
-    var rootId = parentContainerEl.id.substr(0, n);     // Strip container suffix.
-    var buttonGroupEl = parentContainerEl.querySelector(".sequence-controls > .button-group");
-    addInfoButton(buttonGroupEl, rootId);
+    const elParentType = el.parentElement.nodeName;
+    if(elParentType == 'DIV') {
+      const parentContainerEl = el.parentElement.parentElement;
+      const n = parentContainerEl.id.lastIndexOf('-');
+      const rootId = parentContainerEl.id.substr(0, n);     // Strip container suffix.
+      const buttonGroupEl = parentContainerEl.querySelector(".sequence-controls > .button-group");
+      addInfoButton(buttonGroupEl, rootId);
+    }else if(elParentType == 'LI') {
+      const sequenceControlsElem = el.querySelector(".sequence-controls");
+      if (!sequenceControlsElem) {
+        el.classList.add("sequence-member");
+        const rootId = uuidv4();
+        el.id = rootId + '-container';
+        const buttonGroupEl = addButtonGroup(el, rootId);
+        addInfoButton(buttonGroupEl, rootId, true);
+      }
+    }
   });
 }
 
@@ -48,18 +64,18 @@ function addSequenceControlsInfoButton(newElem) {
  *  to toggle the meta fields on and off so that they can be hidden
  *  unless needed.
  */
-function addInfoButton(buttonGroup, rootId) {
-  var buttonId = rootId + '-info';
-  var existingButton = document.getElementById(buttonId);
+function addInfoButton(buttonGroup, rootId, isBlock=false) {
+  const buttonId = rootId + '-info';
+  const existingButton = document.getElementById(buttonId);
   if (existingButton) return;
 
-  var button = document.createElement('button');
+  let button = document.createElement('button');
   button.id = buttonId;
   button.classList.add('button','icon', 'text-replace', 'icon-cogs');
   button.title = 'Info';
 
-  var rootElem = document.getElementById(rootId + '-container');
-  var childElems = rootElem.getElementsByTagName('LI');
+  const rootElem = document.getElementById(rootId + '-container');
+  const childElems = rootElem.getElementsByTagName('li');
   Array.prototype.forEach.call(childElems, function(el) {
     if(el.children.length >= 2){
       if(!el.classList.contains("wasm-hidden-field")){
@@ -70,12 +86,54 @@ function addInfoButton(buttonGroup, rootId) {
 
   button.addEventListener("click", function(e) {
     e.preventDefault();
-    var rootElem = document.getElementById(rootId + '-container');
-    var childElems = rootElem.getElementsByTagName('LI');
+    const rootElem = document.getElementById(rootId + '-container');
+    const childElems = rootElem.getElementsByTagName('li');
     Array.prototype.forEach.call(childElems, function(el) {
       el.classList.toggle('wasm-hidden-field');
       el.classList.toggle('wasm-visible-field');
     });
+    let metaHeading = rootElem.getElementsByClassName("meta-field-title")[0];
+    metaHeading.classList.toggle('wasm-hidden-field');
+    metaHeading.classList.toggle('wasm-visible-field');
   });
+  if(isBlock){
+    buttonGroup.parentElement.classList.add("position-cog");
+  }
   buttonGroup.appendChild(button);
+
+  //add heading
+  let metaHeading = document.createElement("H1");
+  const metaHeadingCopy = document.createTextNode("Meta Field:");
+  metaHeading.appendChild(metaHeadingCopy);
+  metaHeading.classList.add('wasm-hidden-field');
+  metaHeading.classList.add('meta-field-title');
+  if(isBlock){
+    rootElem.prepend(metaHeading);
+  }else{
+    var containerInner = rootElem.getElementsByClassName("wasm-meta-panel")[0];
+    containerInner.prepend(metaHeading);
+  }
+}
+
+/**
+ *  Adds a new info button to the given button groups allowing the user
+ *  to toggle the meta fields on and off so that they can be hidden
+ *  unless needed.
+ */
+function addButtonGroup(el) {
+  let buttonGroup = document.createElement('div');
+  buttonGroup.classList.add('sequence-controls');
+  buttonGroup.style.cssText = "padding: 0";
+  let group = document.createElement('div');
+  group.classList.add('button-group', 'button-group-square');
+  buttonGroup.appendChild(group);
+  el.insertBefore(buttonGroup, el.childNodes[0]);
+  return group;
+}
+
+function uuidv4() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    let r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
 }

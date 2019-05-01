@@ -9,10 +9,26 @@ CTA_VARIANT = (
     ('button', 'Button'),
 )
 
+LINK_VARIANT = (
+    ('none', 'None'),
+    ('variant1', 'Variant1'),
+    ('variant2', 'Variant2'),
+)
+
 
 class RichText(blocks.StructBlock):
     text = blocks.RichTextBlock(required=False)
     meta_id = blocks.CharBlock(required=False, label='ID', classname='wasm-meta-field', help_text='Rich Text Id')
+
+    class Meta:
+        form_classname = 'wasm-meta-panel'
+
+class LinkWithVariantBlock(blocks.StructBlock):
+    link_text = blocks.CharBlock(required=False)
+    meta_variant = blocks.ChoiceBlock(LINK_VARIANT,
+                                      label='Variant',
+                                      default='cover',
+                                      classname='wasm-meta-field')
 
     class Meta:
         form_classname = 'wasm-meta-panel'
@@ -28,6 +44,7 @@ class SimpleCtaLink(blocks.StructBlock):
         label='CTA Style',
         classname='wasm-meta-field'
     )
+    link_with_variant = LinkWithVariantBlock(label='Link', required=False)
 
     class Meta:
         icon = 'link'
