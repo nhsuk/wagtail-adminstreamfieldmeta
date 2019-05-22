@@ -1,0 +1,4 @@
+[run]
+omit =
+    ./wagtailadminstreamfieldmeta/tests.py
+source = wagtailadminstreamfieldmeta
