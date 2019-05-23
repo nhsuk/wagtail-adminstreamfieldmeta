@@ -1,0 +1,14 @@
+trigger:
+  branches:
+    include:
+    - tags/*
+    - refs/tags/*
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- script: |
+    docker-compose build
+    ./scripts/ci-run-test.py
+  displayName: 'Run unitest and coverage'
