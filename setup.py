@@ -17,7 +17,7 @@ setup(
     version=__VERSION__,
     packages=find_packages(),
     include_package_data=True,
-    url='https://github.com/yohanlebret/wagtail-adminstreamfieldmeta',
+    url='https://github.com/nhsuk/wagtail-adminstreamfieldmeta',
     license='MIT',
     description='Wagtail Cms customization to add meta field for streamfield',
     long_description=LONG_DESCRIPTION,
